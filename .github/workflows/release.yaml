@@ -85,7 +85,7 @@ jobs:
         with:
           ref: refs/heads/${{ env.release }}
           release: true
-          prefix: "release/v"
+          prefix: "v"
 
       - name: "Update Release Notes"
         continue-on-error: true

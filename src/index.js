@@ -12,6 +12,8 @@ async function main() {
     : 'Source'
   core.info(`🏳️ Starting Web Request Action - \u001b[35;1m${version}`)
 
+  console.log('some dumb shit ai did')
+
   // Inputs
   core.startGroup('Inputs')
   const url = core.getInput('url', { required: true })

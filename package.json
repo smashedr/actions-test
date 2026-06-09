@@ -1,0 +1,33 @@
+{
+  "name": "web-request-action",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup --config rollup.config.mjs",
+    "build:watch": "npm run build -- --watch",
+    "dev": "npm run build:watch",
+    "lint": "eslint src",
+    "prepare": "npm run build",
+    "prettier": "npm run prettier:write",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "yamllint": "yamllint -c .github/yamllint.yaml ."
+  },
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "axios": "^1.17.0",
+    "form-data": "^4.0.5",
+    "js-yaml": "^4.2.0",
+    "jsonpath-plus": "^10.4.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "eslint": "^10.4.1",
+    "prettier": "^3.8.3",
+    "rollup": "^4.61.1"
+  }
+}

@@ -1,0 +1,148 @@
+name: "Test"
+
+# actions-up-ignore-file
+
+on:
+  workflow_dispatch:
+  #schedule:
+  #  - cron: "18 18 * * 1,3,5"
+  push:
+    branches: [master, main]
+    paths:
+      - ".github/workflows/test.yaml"
+      - "dist/**"
+      - "src/**"
+      - "package*.json"
+      - "requirements*.txt"
+      - "action.yml"
+  pull_request:
+
+env:
+  httpbin: ${{ !github.event.act && 'https://httpbin.org' || 'http://192.168.1.25:8080' }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v6
+
+      - name: "Debug event.json"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        run: cat "${GITHUB_EVENT_PATH}"
+      - name: "Debug CTX github"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        env:
+          GITHUB_CTX: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CTX"
+      - name: "Debug Environment"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        run: env
+
+      - name: "Setup Node"
+        if: ${{ !github.event.act }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: "Install & Build"
+        if: ${{ !github.event.act }}
+        run: |
+          npm ci
+
+      - name: "Debug"
+        continue-on-error: true
+        run: |
+          ls -lah .
+
+      - name: "1: Test Data"
+        id: test1
+        uses: ./
+        with:
+          url: "${{ env.httpbin }}/post"
+          #insecure: true
+          #data: '{"key": "value"}'
+          data: |
+            key: value
+          params: |
+            param1: value1
+          config: |
+            timeout: 30000
+
+      - name: "1: Verify Data"
+        if: ${{ !github.event.act }}
+        run: |
+          echo 'status: ${{ steps.test1.outputs.status }}'
+          echo 'headers: ${{ steps.test1.outputs.headers }}'
+          echo 'data: ${{ steps.test1.outputs.data }}'
+          if [ '${{ fromJson(steps.test1.outputs.data).data }}' != '{"key":"value"}' ];then
+            echo "Output Invalid"
+            exit 1
+          fi
+
+      - name: "2: Test File"
+        if: ${{ !github.event.act }}
+        id: test2
+        uses: ./
+        with:
+          url: "${{ env.httpbin }}/post"
+          #insecure: true
+          #data: '{"key": "value"}'
+          data: |
+            key: value
+          params: |
+            param1: value1
+          file: event.json
+          filename: not-event.json
+
+      - name: "2: Verify File"
+        if: ${{ !github.event.act }}
+        run: |
+          echo 'status: ${{ steps.test2.outputs.status }}'
+          echo 'headers: ${{ steps.test2.outputs.headers }}'
+          echo 'data: ${{ steps.test2.outputs.data }}'
+          echo 'data.form: ${{ fromJson(steps.test2.outputs.data).form.key }}'
+          if [ '${{ fromJson(steps.test2.outputs.data).form.key }}' != 'value' ];then
+            echo "Output Invalid"
+            exit 1
+          fi
+
+      - name: "3: Test Path"
+        if: ${{ !github.event.act }}
+        id: test3
+        uses: ./
+        with:
+          url: "https://pypi.org/pypi/toml_run/json"
+          method: "GET"
+          path: '$.urls[?(@.packagetype=="sdist")]'
+
+      - name: "3: Verify Path"
+        if: ${{ !github.event.act }}
+        run: |
+          echo 'status: ${{ steps.test3.outputs.status }}'
+          echo 'headers: ${{ steps.test3.outputs.headers }}'
+          echo 'data: ${{ steps.test3.outputs.data }}'
+          echo 'result: ${{ steps.test3.outputs.result }}'
+          if [ -z '${{ steps.test3.outputs.result }}' ];then
+            echo "Output Invalid: result"
+            exit 1
+          fi
+          echo 'url: ${{ fromJSON(steps.test3.outputs.result).url }}'
+          echo 'sha256: ${{ fromJSON(steps.test3.outputs.result).digests.sha256 }}'
+
+      - name: "Schedule Failure Notification"
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          description: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

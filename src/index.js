@@ -12,7 +12,7 @@ async function main() {
     : 'Source'
   core.info(`🏳️ Starting Web Request Action - \u001b[35;1m${version}`)
 
-  console.log('some dumb shit ai did')
+  console.log('some dumb shit ai did then fucked it up even more')
 
   // Inputs
   core.startGroup('Inputs')

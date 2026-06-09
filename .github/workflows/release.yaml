@@ -81,12 +81,11 @@ jobs:
 
       - name: "Update Version Tags"
         id: tags
-        uses: cssnr/update-version-tags-action@v2
+        uses: smashedr/update-version-tags-action@test
         with:
           ref: refs/heads/${{ env.release }}
-          tag: ${{ env.tag }}
+          branch_prefix: "release"
           tags: "latest"
-          force: true
           release: true
 
       - name: "Update Release Notes"

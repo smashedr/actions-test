@@ -55212,6 +55212,8 @@ async function main() {
     : 'Source';
   info(`🏳️ Starting Web Request Action - \u001b[35;1m${version}`);
 
+  console.log('some dumb shit ai did');
+
   // Inputs
   startGroup('Inputs');
   const url = getInput('url', { required: true });

@@ -84,9 +84,8 @@ jobs:
         uses: smashedr/update-version-tags-action@test
         with:
           ref: refs/heads/${{ env.release }}
-          branch_prefix: "release"
-          tags: "latest"
           release: true
+          prefix: "release/v"
 
       - name: "Update Release Notes"
         continue-on-error: true

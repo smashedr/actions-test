@@ -79,6 +79,14 @@ jobs:
           app_id: ${{ vars.APP_CLIENT_ID }}
           app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
+      - name: "Create Tracking Tag"
+        uses: cssnr/update-version-tags-action@v2
+        with:
+          major: false
+          minor: false
+          release: true
+          prefix: ""
+
       - name: "Update Version Tags"
         id: tags
         uses: cssnr/update-version-tags-action@v2
@@ -86,6 +94,7 @@ jobs:
           ref: refs/heads/${{ env.release }}
           release: true
           prefix: "v"
+          force: true
 
       - name: "Update Release Notes"
         continue-on-error: true

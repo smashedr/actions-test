@@ -85,7 +85,7 @@ jobs:
           major: false
           minor: false
           release: true
-          prefix: "${{ github.event.release.target_commitish }}-" # TODO: prefix - draft.yaml
+          prefix: "${{ github.event.release.target_commitish }}-"
 
       - name: "Update Version Tags"
         id: tags

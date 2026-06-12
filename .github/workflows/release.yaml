@@ -85,7 +85,7 @@ jobs:
           major: false
           minor: false
           release: true
-          prefix: "master-"
+          prefix: "${{ github.event.release.target_commitish }}-" # TODO: Tag Prefix
 
       - name: "Update Version Tags"
         id: tags

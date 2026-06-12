@@ -85,7 +85,7 @@ jobs:
           major: false
           minor: false
           release: true
-          prefix: ""
+          prefix: "master-"
 
       - name: "Update Version Tags"
         id: tags

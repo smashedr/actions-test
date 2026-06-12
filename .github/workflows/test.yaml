@@ -48,7 +48,7 @@ jobs:
         run: env
 
       - name: "Test"
-        uses: smashedr/actions-test@v1.0.4
+        uses: smashedr/actions-test@1.0.5
         with:
           url: "https://httpbin.org/get"
           method: "get"

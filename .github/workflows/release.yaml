@@ -30,7 +30,7 @@ jobs:
           echo "env.release: ${{ env.release }}"
 
       - name: "Checkout Source"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: ${{ env.source }}
 
@@ -46,7 +46,7 @@ jobs:
           npm ci
 
       - name: "Checkout Release"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: ${{ env.release }}
           ref: ${{ env.release }}
